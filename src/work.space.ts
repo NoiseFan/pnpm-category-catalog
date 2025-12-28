@@ -155,7 +155,7 @@ export const batchProcessCatalog = async (config: IWorkSpaceConfig): Promise<IWo
         // })
 
         const choice = await multiselect({
-            message: '选择要分类的包 (留空跳过本轮)',
+            message: '请选择要分类的依赖包 (如无需操作，请回车跳过本轮)',
             options: remainingKeys.map(key => ({
                 value: key,
                 label: key,
