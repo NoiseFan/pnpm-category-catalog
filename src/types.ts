@@ -31,6 +31,11 @@ export interface IWorkSpaceContext {
         choice: string[]
         name: string
         dependencies: Record<string, string>
+        categories?: Array<{
+            name: string
+            packages: string[]
+            dependencies: Record<string, string>
+        }>
     }
 }
 
