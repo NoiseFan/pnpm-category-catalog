@@ -1,19 +1,26 @@
+import type { IConfig, IWorkSpace, IWorkSpaceConfig } from '@/types.ts'
 import { readFile } from 'node:fs/promises'
 import { multiselect, text } from '@clack/prompts'
 import { findUp } from 'find-up'
 import { parse, stringify } from 'yaml'
 
-export const getNewWorkSpaceYaml = async (config: any) => {
-    const pnpmWorkSpacePath = await findUp('pnpm-workspace.yaml', {
+export const getWorkSpaceYaml = async (config: IConfig): Promise<IWorkSpace> => {
+    const workSpaceYamlPath = await findUp('pnpm-workspace.yaml', {
         cwd: config.cwd,
     })
 
-    if (!pnpmWorkSpacePath) {
-        return 'no has pnpm-workspace.yaml'
+    if (!workSpaceYamlPath) {
+        throw new Error('当前暂未使用 pnpm-workspace.yaml 相关功能，请检测您当前的项目后在使用此 CLI 工具')
     }
 
-    const context = parse(await readFile(pnpmWorkSpacePath, 'utf-8'))
+    return {
+        workSpaceYamlPath,
+        workspace: parse(await readFile(workSpaceYamlPath, 'utf-8')),
+    }
+}
 
+export const getNewWorkSpaceYaml = async (config: IWorkSpaceConfig) => {
+    const context = config.workspace
     if (!context.catalog) {
         return '暂无 catalog'
     }
@@ -39,7 +46,7 @@ export const getNewWorkSpaceYaml = async (config: any) => {
     const dependencies: Record<string, string> = {}
     if (choice && typeof choice === 'object') {
         choice.forEach((key: string) => {
-            dependencies[key] = catalog[key]
+            dependencies[key] = catalog[key]!
         })
     }
 
@@ -48,7 +55,7 @@ export const getNewWorkSpaceYaml = async (config: any) => {
     // 从 context.catalog 中删除选中的 key
     if (choice && typeof choice === 'object') {
         choice.forEach((key: string) => {
-            delete context.catalog[key]
+            delete context.catalog![key]
         })
     }
 
@@ -78,7 +85,7 @@ export const getNewWorkSpaceYaml = async (config: any) => {
 
         // 将更新后的 context 写回到文件
         return {
-            path: pnpmWorkSpacePath,
+            path: config.workSpaceYamlPath,
             // 最终要替换 pnpm-workspace.yaml 内容
             context: stringify(context, {
                 indent: 2,

@@ -5,7 +5,7 @@ import { glob } from 'glob'
 import { resolveConfig } from '@/config.ts'
 import { updatePackageDependencies } from '@/dependencies.ts'
 import { stringifyYamlWithTopLevelBlankLine } from '@/utils.ts'
-import { getNewWorkSpaceYaml } from '@/work.space.ts'
+import { getNewWorkSpaceYaml, getWorkSpaceYaml } from '@/work.space.ts'
 import { name, version } from '../package.json'
 
 const cli = cac(name)
@@ -19,7 +19,12 @@ cli.command('')
         })
 
         const packageDependencies = packagePathMap.map(p => JSON.parse(readFileSync(resolve(config.cwd, p), 'utf-8')))
-        const workspace = await getNewWorkSpaceYaml(config)
+        const workSpaceYaml = await getWorkSpaceYaml(config)
+
+        const workspace = await getNewWorkSpaceYaml({
+            ...config,
+            ...workSpaceYaml,
+        })
 
         // 更新 package.json 中的依赖版本
         if (workspace && typeof workspace === 'object' && 'catalogs' in workspace && workspace.catalogs && workspace.catalogs.dependencies) {
