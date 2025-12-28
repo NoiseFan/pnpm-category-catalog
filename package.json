@@ -3,7 +3,7 @@
     "type": "module",
     "version": "0.0.2",
     "packageManager": "pnpm@10.15.1",
-    "description": "Pnpm auto category catalog",
+    "description": "A CLI tool for managing the pnpm workspace catalog, which helps you categorize the packages in the catalog and update the associated package.json reference.",
     "author": "lonewolfyx <olddrivero.king@qq.com>",
     "license": "MIT",
     "homepage": "https://github.com/lonewolfyx/pnpm-category-catalog",
