@@ -3,6 +3,8 @@ import { readFile } from 'node:fs/promises'
 import { confirm, multiselect, outro, text } from '@clack/prompts'
 import { findUp } from 'find-up'
 import { parse, stringify } from 'yaml'
+import { CANCEL_PROCESS } from '@/constant.ts'
+import { isCancelProcess } from '@/utils.ts'
 
 export const getWorkSpaceYaml = async (config: IConfig): Promise<IWorkSpace> => {
     const workSpaceYamlPath = await findUp('pnpm-workspace.yaml', {
@@ -161,6 +163,8 @@ export const batchProcessCatalog = async (config: IWorkSpaceConfig): Promise<IWo
             required: false,
         }) as string[]
 
+        isCancelProcess(choice, CANCEL_PROCESS)
+
         if (!choice || choice.length === 0) {
             // console.log('本轮未选择任何包')
         }
@@ -170,6 +174,8 @@ export const batchProcessCatalog = async (config: IWorkSpaceConfig): Promise<IWo
                 placeholder: '',
                 defaultValue: '',
             }) as string
+
+            isCancelProcess(catalogsName, CANCEL_PROCESS)
 
             if (catalogsName && catalogsName.trim()) {
                 // 将选择的结果与 catalog 匹配，得到 key: value 版本号
@@ -187,6 +193,8 @@ export const batchProcessCatalog = async (config: IWorkSpaceConfig): Promise<IWo
                 const confirmed = await confirm({
                     message: `确认将这 ${choice.length} 个包添加到分类 "${catalogsName}" 中？`,
                 }) as boolean
+
+                isCancelProcess(confirmed, CANCEL_PROCESS)
 
                 if (confirmed) {
                     // 从 context.catalog 中删除选中的 key
@@ -228,6 +236,8 @@ export const batchProcessCatalog = async (config: IWorkSpaceConfig): Promise<IWo
                 message: '是否继续处理剩余的包？',
                 initialValue: false,
             }) as boolean
+
+            isCancelProcess(continueProcessing, CANCEL_PROCESS)
         }
         else {
             continueProcessing = false

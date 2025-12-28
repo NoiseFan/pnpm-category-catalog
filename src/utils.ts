@@ -1,4 +1,5 @@
 import { writeFileSync } from 'node:fs'
+import { cancel, isCancel } from '@clack/prompts'
 import { Table } from 'console-table-printer'
 import { parseDocument, YAMLMap } from 'yaml'
 
@@ -32,4 +33,11 @@ export const printTable = (data: any) => {
 
     p.addRows(data)
     return p.printTable()
+}
+
+export const isCancelProcess = (value: unknown, message: string) => {
+    if (isCancel(value)) {
+        cancel(message)
+        return process.exit(0)
+    }
 }
