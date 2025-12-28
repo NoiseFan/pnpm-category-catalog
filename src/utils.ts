@@ -1,3 +1,4 @@
+import { writeFileSync } from 'node:fs'
 import { parseDocument, YAMLMap } from 'yaml'
 
 export const stringifyYamlWithTopLevelBlankLine = (value: string) => {
@@ -14,4 +15,8 @@ export const stringifyYamlWithTopLevelBlankLine = (value: string) => {
     }
 
     return doc.toString()
+}
+
+export const writeFile = (path: string, content: string) => {
+    writeFileSync(path, content, 'utf-8')
 }

@@ -1,37 +1,42 @@
-import type { IConfig, IWorkSpaceContext } from '@/types.ts'
-import { readFileSync, writeFileSync } from 'node:fs'
+import type { IConfig, IUpdatePackage, IWorkSpaceContext } from '@/types.ts'
+import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 export const updatePackageDependencies = (
     config: IConfig,
     packagePathMap: string[],
     workspace: IWorkSpaceContext,
-) => {
+): IUpdatePackage[] => {
     const dependencyTypes = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']
 
-    packagePathMap.forEach((path: any, index: number) => {
+    return packagePathMap.map((path: string) => {
         const filePath = resolve(config.cwd, path)
-        const context = JSON.parse(readFileSync(filePath, 'utf-8'))
+        const fileContent = readFileSync(filePath, 'utf-8')
+        const pkgData = JSON.parse(fileContent)
 
-        let updated = false
-
+        let isUpdated = false
         dependencyTypes.forEach((depType) => {
-            if (context[depType]) {
-                Object.keys(context[depType]).forEach((depName) => {
-                    // 检查这个依赖是否在选中的 dependencies 中
+            const dependencies = pkgData[depType]
+            if (dependencies) {
+                Object.keys(dependencies).forEach((depName) => {
+                    // 检查该依赖是否命中 workspace 的 catalog 配置
                     if (workspace.catalogs.dependencies[depName]) {
-                        // 更新版本为 catalog:{$catalogs.name}
-                        context[depType][depName] = `catalog:${workspace.catalogs.name}`
-                        updated = true
-                        // console.log(`更新 ${filePath} 中的 ${depName} 为 catalog:${catalogs.name}`)
+                        const targetVersion = `catalog:${workspace.catalogs.name}`
+
+                        // 只有在版本不一致时才标记更新，避免不必要的改动
+                        if (dependencies[depName] !== targetVersion) {
+                            dependencies[depName] = targetVersion
+                            isUpdated = true
+                        }
                     }
                 })
             }
         })
 
-        // 如果有更新，写回到文件
-        if (updated) {
-            writeFileSync(filePath, `${JSON.stringify(context, null, 2)}\n`, 'utf-8')
+        return {
+            path: filePath,
+            context: isUpdated ? `${JSON.stringify(pkgData, null, 2)}\n` : fileContent,
+            isUpdate: isUpdated,
         }
     })
 }

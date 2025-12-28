@@ -33,3 +33,9 @@ export interface IWorkSpaceContext {
         dependencies: Record<string, string>
     }
 }
+
+export interface IUpdatePackage {
+    path: string
+    context: string
+    isUpdate: boolean
+}
