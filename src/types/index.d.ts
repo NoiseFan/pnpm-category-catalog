@@ -41,12 +41,13 @@ export interface ICatalogsCategories {
 export interface IWorkSpaceContext {
     path: string
     context: string
-    catalogs: {
-        choice: string[]
-        name: string
-        dependencies: Record<string, string>
-        categories?: ICatalogsCategories[]
-    }
+    catalogs: IWorkSpaceCataLogs
+}
+export interface IWorkSpaceCataLogs {
+    choice: string[]
+    name: string
+    dependencies: Record<string, string>
+    categories?: ICatalogsCategories[]
 }
 
 export interface IUpdatePackage {
