@@ -1,7 +1,7 @@
 <div align="center">
 <h1>Pnpm Category Catalog</h1>
 
-English | [中文](https://github.com/lonewolfyx/pnpm-category-catalog/raw/master/README_ZH.md)
+English | [中文](https://github.com/ScaffoldCore/pnpm-category-catalog/blob/master/README_ZH.md)
 
 </div>
 
