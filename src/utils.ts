@@ -68,7 +68,7 @@ export const formatDependencyUsage = (
     const users = usageMap.get(depName) ?? []
 
     if (users.length === 0)
-        return unusedText
+        return pc.red(unusedText)
     if (users.length < 3)
         return users.join(', ')
 
