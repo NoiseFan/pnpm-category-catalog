@@ -1,7 +1,7 @@
 import type { IConfig, IResolvedPackageDependencies, IResolvedPackageResult, IWorkSpaceContext } from '@/types'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { DEPENDENCY_TYPES } from '@/constant.ts'
+import { CATALOG_PLACEHOLDER, DEPENDENCY_TYPES } from '@/constant.ts'
 
 export const resolvePackageDependencies = (
     config: IConfig,
@@ -40,7 +40,7 @@ export const resolvePackageDependencies = (
                     usedCatalogDepNames.add(depName)
 
                     const categoryName = depToCategoryMap.get(depName) || catalogs.name
-                    const targetVersion = `catalog:${categoryName}`
+                    const targetVersion = `${CATALOG_PLACEHOLDER}${categoryName}`
 
                     hitDependencies.push({
                         dependency: depName,
@@ -70,7 +70,7 @@ export const resolvePackageDependencies = (
             const categoryName = depToCategoryMap.get(depName) || catalogs.name
             unused.push({
                 dependency: depName,
-                version: `catalog:${categoryName}`,
+                version: `${CATALOG_PLACEHOLDER}${categoryName}`,
             })
         }
     })

@@ -58,8 +58,8 @@ export const managementWorkSpaceCatalog = async (config: IConfig): Promise<void 
                 ) => {
                     for (const pkg of category.packages) {
                         acc.push({
-                            Dependencies: pkg,
-                            Catalog: `catalog:${category.name}`,
+                            Dependencies: pc.yellow(pkg),
+                            Catalog: `${CATALOG_PLACEHOLDER}${pc.blue(category.name.replace(CATALOG_PLACEHOLDER, ''))}`,
                         })
                     }
                     return acc
